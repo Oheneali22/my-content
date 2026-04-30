@@ -2,25 +2,7 @@
 
 > A minimal, production-ready Java starter project with a dedicated website, built and maintained by **Landmark Technology**. This repository contains both the Java application source code and the website that hosts it.
 
----
 
-## Table of Contents
-
-1. [Project Overview](#project-overview)
-2. [Repository Structure](#repository-structure)
-3. [Part 1: Building and Running the Java Application](#part-1-building-and-running-the-java-application)
-   - [Prerequisites](#prerequisites)
-   - [Build Steps](#build-steps)
-   - [Running the Application](#running-the-application)
-   - [Expected Output](#expected-output)
-4. [Part 2: Running the Website Locally](#part-2-running-the-website-locally)
-   - [Prerequisites](#prerequisites-1)
-   - [Install Dependencies](#install-dependencies)
-   - [Start the Development Server](#start-the-development-server)
-   - [Access the Website](#access-the-website)
-5. [Deployment on Amazon Linux (EC2)](#deployment-on-amazon-linux-ec2)
-
----
 
 ## Project Overview
 
@@ -31,31 +13,6 @@ This project consists of two components:
 | **Java Application** | A simple console application that prints a greeting and the current server time. | Java 17, Apache Maven |
 | **Website** | A branded project page that lets users browse the source code, read the build guide, and download the project. | React, TypeScript, Vite, Tailwind CSS |
 
----
-
-## Repository Structure
-
-```
-java-app-site/                  ← Website root (React/Vite project)
-├── README.md                   ← This file
-├── package.json                ← Node.js dependencies for the website
-├── vite.config.ts              ← Vite build configuration
-├── client/
-│   └── src/
-│       ├── pages/
-│       │   └── Home.tsx        ← Main website page
-│       └── index.css           ← Global styles
-└── ...
-
-simple-java-app/                ← Java application (separate directory)
-├── README.md                   ← Java-specific deployment guide
-├── pom.xml                     ← Maven build configuration
-└── src/
-    └── main/
-        └── java/
-            └── com/example/
-                └── Main.java   ← Application entry point
-```
 
 ---
 
@@ -101,12 +58,76 @@ Execute the packaged JAR using the `java` command:
 java -jar target/simple-java-app-1.0-SNAPSHOT.jar
 ```
 
-### Expected Output
+### Verify Maven Is Working
 
+After installing Maven, confirm it is properly configured:
+
+```bash
+mvn -version
+```
+
+Expected output (versions may vary):
+```
+Apache Maven 3.x.x
+Maven home: /usr/share/maven
+Java version: 17.x.x, vendor: Amazon.com Inc.
+```
+
+You can also verify Maven can resolve dependencies by running:
+```bash
+mvn dependency:resolve
+```
+
+If this completes without errors, Maven is correctly installed and has network access to download dependencies.
+
+### Testing the Application
+
+After building with `mvn clean package`, run the JAR to test:
+
+```bash
+java -jar target/simple-java-app-1.0-SNAPSHOT.jar
+```
+
+**Expected Output:**
 ```
 Hello from Landmark Technology!
 Current Time: 2026-04-26T12:00:00.000
 ```
+
+To run Maven's built-in test phase (executes any unit tests in `src/test/`):
+```bash
+mvn test
+```
+
+A successful test run will show:
+```
+[INFO] BUILD SUCCESS
+```
+
+### Running on an EC2 Instance
+
+To build and run the Java application on an Amazon Linux EC2 instance:
+
+**Step 1 — SSH into your EC2 instance:**
+```bash
+ssh -i <your-key.pem> ec2-user@<your-ec2-public-ip>
+```
+
+**Step 2 — Install Java and Maven:**
+```bash
+sudo yum update -y
+sudo yum install java-17-amazon-corretto-devel -y
+sudo yum install maven -y
+```
+
+**Step 3 — Clone or upload the project, then build and run:**
+```bash
+cd simple-java-app
+mvn clean package
+java -jar target/simple-java-app-1.0-SNAPSHOT.jar
+```
+
+> **Note:** Since this is a console application, the output will display directly in your SSH terminal. No inbound Security Group rules are needed for the Java app itself — it does not start a network server.
 
 ---
 
@@ -195,6 +216,15 @@ http://<your-ec2-public-ip>:8080
 ```
 
 > **Note:** Ensure that your EC2 Security Group allows inbound traffic on port `8080` (or whichever port you choose).
+
+### Troubleshooting EC2 Access
+
+If you cannot reach the website from your browser:
+
+1. Confirm the server is running: `curl http://localhost:8080` from the EC2 instance itself.
+2. Check your **Security Group** has an inbound rule allowing TCP on port `8080` from `0.0.0.0/0` (or your IP).
+3. If using a VPC with a private subnet, ensure a proper route through a NAT Gateway or bastion host.
+4. Verify the instance has a **public IP** or **Elastic IP** assigned.
 
 ---
 

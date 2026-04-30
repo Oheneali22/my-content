@@ -14,15 +14,26 @@ const DOWNLOAD_URL = "/manus-storage/simple-java-app_02c6394b.zip";
 
 const mainJavaCode = `package com.example;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class Main {
+
+    public static String getGreeting() {
+        return "Hello from Landmark Technology!";
+    }
+
+    public static String getFormattedTime(LocalDateTime dateTime) {
+        return "Current Time: " + dateTime.format(
+            DateTimeFormatter.ISO_LOCAL_DATE_TIME
+        );
+    }
+
     public static void main(String[] args) {
-        System.out.println(
-            "Hello from Landmark Technology!"
-        );
-        System.out.println(
-            "Current Time: " + 
-            java.time.LocalDateTime.now()
-        );
+        System.out.println(getGreeting());
+        System.out.println(getFormattedTime(
+            LocalDateTime.now()
+        ));
     }
 }`;
 
@@ -38,7 +49,17 @@ const pomXml = `<project xmlns="http://maven.apache.org/POM/4.0.0"
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
@@ -53,6 +74,11 @@ const pomXml = `<project xmlns="http://maven.apache.org/POM/4.0.0"
             </manifest>
           </archive>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
       </plugin>
     </plugins>
   </build>
@@ -262,10 +288,14 @@ export default function Home() {
               <div className="pl-4"><span className="text-yellow-400">├── pom.xml</span><span className="text-slate-600 ml-4"># Maven build configuration</span></div>
               <div className="pl-4"><span className="text-slate-300">├── README.md</span><span className="text-slate-600 ml-4"># Deployment guide</span></div>
               <div className="pl-4"><span className="text-blue-400">└── src/</span></div>
-              <div className="pl-8"><span className="text-blue-400">└── main/</span></div>
+              <div className="pl-8"><span className="text-blue-400">├── main/</span></div>
               <div className="pl-12"><span className="text-blue-400">└── java/</span></div>
               <div className="pl-16"><span className="text-blue-400">└── com/example/</span></div>
               <div className="pl-20"><span className="text-green-400">└── Main.java</span><span className="text-slate-600 ml-4"># Application entry point</span></div>
+              <div className="pl-8"><span className="text-blue-400">└── test/</span></div>
+              <div className="pl-12"><span className="text-blue-400">└── java/</span></div>
+              <div className="pl-16"><span className="text-blue-400">└── com/example/</span></div>
+              <div className="pl-20"><span className="text-green-400">└── MainTest.java</span><span className="text-slate-600 ml-4"># Unit tests (JUnit 5)</span></div>
             </div>
           </div>
         </div>
