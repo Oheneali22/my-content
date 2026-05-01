@@ -1,10 +1,10 @@
-# Landmark Technology — Simple Java Application
+# Landmark Technology — Maven Web Application (DevOps Class 42)
 
-> A minimal, production-ready Java starter project built and maintained by **Landmark Technology**.
+> A Java web application built with Maven for **DevOps Class 42** by **Landmark Technology**. Runs on port **8081** and serves a styled web page.
 
 ## Project Overview
 
-A simple console application that prints a greeting and the current server time, built with **Java 17** and **Apache Maven**.
+This application starts an embedded HTTP server on port **8081** and serves a web page about Landmark Technology's DevOps Class 42. Built with **Java 17** and **Apache Maven**.
 
 ## Project Structure
 
@@ -13,7 +13,7 @@ A simple console application that prints a greeting and the current server time,
 ├── README.md                                # This file
 └── src/
     ├── main/java/com/example/
-    │   └── Main.java                        # Application entry point
+    │   └── Main.java                        # Web server entry point
     └── test/java/com/example/
         └── MainTest.java                    # Unit tests (JUnit 5)
 ```
@@ -21,8 +21,6 @@ A simple console application that prints a greeting and the current server time,
 ---
 
 ## Prerequisites
-
-The application requires **Java 17** and **Apache Maven**.
 
 **On Amazon Linux (EC2):**
 ```bash
@@ -37,40 +35,14 @@ java -version
 mvn -version
 ```
 
-### Verify Maven Is Working
-
-```bash
-mvn -version
-```
-
-Expected output (versions may vary):
-```
-Apache Maven 3.x.x
-Maven home: /usr/share/maven
-Java version: 17.x.x, vendor: Amazon.com Inc.
-```
-
-You can also verify Maven can resolve dependencies:
-```bash
-mvn dependency:resolve
-```
-
 ---
 
 ## Build the Project
-
-Clone the repository and run the Maven build:
 
 ```bash
 git clone https://github.com/LandmakTechnology/landmark_javaapp.git
 cd landmark_javaapp
 mvn clean package
-```
-
-Maven will compile the source code, run the tests, and produce a runnable JAR file at:
-
-```
-target/simple-java-app-1.0-SNAPSHOT.jar
 ```
 
 ---
@@ -81,19 +53,22 @@ target/simple-java-app-1.0-SNAPSHOT.jar
 java -jar target/simple-java-app-1.0-SNAPSHOT.jar
 ```
 
-**Expected Output:**
+**Expected terminal output:**
 ```
 Hello from Landmark Technology!
-Current Time: 2026-04-26T12:00:00.000
+Server started on port 8081
+Access the application at http://localhost:8081
+```
+
+Then open your browser and go to:
+```
+http://localhost:8081
 ```
 
 ---
 
 ## Run the Tests
 
-This project includes **JUnit 5** unit tests in `src/test/java/com/example/MainTest.java`.
-
-**Run all tests:**
 ```bash
 mvn test
 ```
@@ -115,7 +90,7 @@ mvn test
 | `testFormattedTimeContainsPrefix` | Checks output starts with "Current Time: " |
 | `testFormattedTimeContainsDate` | Verifies the date appears in the output |
 | `testFormattedTimeExactMatch` | Validates exact output for a known date/time |
-| `testMainRunsWithoutException` | Ensures the main method executes without errors |
+| `testHtmlPageContainsDevOpsClass42` | Verifies the HTML page includes "DevOps Class 42" |
 
 ---
 
@@ -133,7 +108,7 @@ sudo yum install java-17-amazon-corretto-devel -y
 sudo yum install maven -y
 ```
 
-**Step 3 — Clone, build, test, and run:**
+**Step 3 — Clone, build, and run:**
 ```bash
 git clone https://github.com/LandmakTechnology/landmark_javaapp.git
 cd landmark_javaapp
@@ -141,8 +116,24 @@ mvn clean package
 java -jar target/simple-java-app-1.0-SNAPSHOT.jar
 ```
 
-> **Note:** This is a console application — output displays directly in your terminal. No Security Group inbound rules are needed.
+**Step 4 — Open port 8081 in your Security Group:**
+
+1. Go to **AWS Console → EC2 → Security Groups**
+2. Select the Security Group attached to your instance
+3. Click **Edit inbound rules → Add rule**
+4. Set: **Type:** Custom TCP | **Port:** 8081 | **Source:** 0.0.0.0/0
+5. Click **Save rules**
+
+**Step 5 — Access the application in your browser:**
+```
+http://<your-ec2-public-ip>:8081
+```
+
+> **Tip:** To run the application in the background so it stays running after you close SSH:
+> ```bash
+> nohup java -jar target/simple-java-app-1.0-SNAPSHOT.jar &
+> ```
 
 ---
 
-*Landmark Technology — Simple Java Application | Open Source*
+*Landmark Technology — Maven Web Application | DevOps Class 42 | Open Source*

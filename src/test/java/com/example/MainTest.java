@@ -47,7 +47,8 @@ class MainTest {
     }
 
     @Test
-    void testMainRunsWithoutException() {
-        assertDoesNotThrow(() -> Main.main(new String[]{}));
+    void testHtmlPageContainsDevOpsClass42() {
+        String html = Main.getHtmlPage();
+        assertTrue(html.contains("DevOps Class 42"));
     }
 }
