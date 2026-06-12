@@ -1,27 +1,23 @@
-name: Fake CI Pipeline
+name: Runner Investigation
 
 on:
   push:
 
 jobs:
-  ci-job:
+  investigate:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Show files
+    - name: Current Directory
+      run: pwd
+
+    - name: Current User
+      run: whoami
+
+    - name: Operating System
+      run: uname -a
+
+    - name: List Files
       run: ls -la
-
-    - name: Install phase
-      run: echo "Installing dependencies..."
-
-    - name: Test phase
-      run: echo "Running tests..."
-
-    - name: Build phase
-      run: echo "Building application..."
-
-    - name: Pipeline complete
-      run: echo "CI pipeline completed successfully"
