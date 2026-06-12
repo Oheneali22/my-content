@@ -1,10 +1,10 @@
-name: First CI Pipeline
+name: Fake CI Pipeline
 
 on:
   push:
 
 jobs:
-  first-job:
+  ci-job:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,5 +14,14 @@ jobs:
     - name: Show files
       run: ls -la
 
-    - name: Say hello
-      run: echo "Hello Ali, GitHub Actions is working"
+    - name: Install phase
+      run: echo "Installing dependencies..."
+
+    - name: Test phase
+      run: echo "Running tests..."
+
+    - name: Build phase
+      run: echo "Building application..."
+
+    - name: Pipeline complete
+      run: echo "CI pipeline completed successfully"
