@@ -21,3 +21,12 @@ jobs:
 
     - name: List Files
       run: ls -la
+
+    - name: Create Build Directory
+      run: mkdir build
+
+    - name: Create Artifact
+      run: echo "Version 1" > build/app.txt
+
+    - name: Verify Artifact
+      run: cat build/app.txt
