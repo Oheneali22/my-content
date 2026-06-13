@@ -1,32 +1,23 @@
-name: Runner Investigation
+name: Real CI Pipeline
 
 on:
   push:
+    branches:
+      - main
 
 jobs:
-  investigate:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-    - name: Current Directory
-      run: pwd
-
-    - name: Current User
-      run: whoami
-
-    - name: Operating System
-      run: uname -a
-
-    - name: List Files
+    - name: Show files
       run: ls -la
 
-    - name: Create Build Directory
-      run: mkdir build
+    - name: Build Docker image
+      run: docker build -t my-nginx-app:${{ github.sha }} .
 
-    - name: Create Artifact
-      run: echo "Version 1" > build/app.txt
-
-    - name: Verify Artifact
-      run: cat build/app.txt
+    - name: Test image exists
+      run: docker images
