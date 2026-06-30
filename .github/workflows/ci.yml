@@ -1,1 +1,48 @@
 
+name: CI Docker Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  IMAGE_REPO: oheneali22/my-content
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npx pnpm@10.4.1 install
+
+      - name: Type check
+        run: npx pnpm@10.4.1 check
+
+      - name: Build app
+        run: npx pnpm@10.4.1 build
+
+      - name: Build Docker image
+        run: docker build -t $IMAGE_REPO:${{ github.run_number }} .
+
+      - name: Smoke test container
+        run: |
+          docker rm -f my-content-test || true
+          docker run -d --name my-content-test -p 3001:3000 $IMAGE_REPO:${{ github.run_number }}
+          sleep 5
+          curl -f http://localhost:3001
+          docker rm -f my-content-test
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker push $IMAGE_REPO:${{ github.run_number }}
