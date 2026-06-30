@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-content
+  namespace: prod
+  labels:
+    app: my-content
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-content
+  template:
+    metadata:
+      labels:
+        app: my-content
+    spec:
+      containers:
+        - name: my-content
+          image: oheneali22/my-content:11
+          ports:
+            - containerPort: 3000
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  my-content-service
+  namespace: prod
+spec:
+  selector:
+    app:  my-content
+  type:  NodePort
+  ports:
+  - name: my-content-port 
+    port:  80
+    targetPort:  3000
+    nodePort: 30080

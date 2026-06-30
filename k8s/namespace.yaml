@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  prod
+
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name:  my-content-service
+  namespace: prod
+spec:
+  selector:
+    app:  my-content
+  type:  NodePort
+  ports:
+  - name: my-content-port 
+    port:  80
+    targetPort:  3000
+    nodePort: 30080
