@@ -16,7 +16,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npx pnpm@10.4.1 install'
+                sh 'npx pnpm@10.4.1 install --frozen-lockfile'
             }
         }
 
@@ -34,7 +34,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $IMAGE_REPO:$TAG .'
+                sh 'docker build -f Dockerfile -t $IMAGE_REPO:$TAG .'
                 sh 'docker images | grep my-content'
             }
         }
@@ -63,21 +63,6 @@ pipeline {
                     docker push $IMAGE_REPO:$TAG
                     '''
                 }
-            }
-        }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh '''
-                kubectl apply -f k8s/namespace.yaml
-                kubectl apply -f k8s/deployment.yaml
-
-                kubectl set image deployment/my-content \
-                  my-content=$IMAGE_REPO:$TAG \
-                  -n prod
-
-                kubectl rollout status deployment/my-content -n prod
-                '''
             }
         }
     }
