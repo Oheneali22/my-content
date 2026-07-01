@@ -34,7 +34,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -f Dockerfile -t $IMAGE_REPO:$TAG -t $IMAGE_REPO:latest .'
+                sh 'docker build --pull -f Dockerfile -t $IMAGE_REPO:$TAG -t $IMAGE_REPO:latest .'
                 sh 'docker images | grep my-content'
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                 docker rm -f my-content-test || true
                 docker run -d --name my-content-test -p 3001:3000 $IMAGE_REPO:$TAG
                 sleep 5
-                curl -f http://localhost:3001
+                curl --retry 10 --retry-delay 3 --retry-connrefused -f http://localhost:3001
                 docker rm -f my-content-test
                 '''
             }
@@ -72,7 +72,8 @@ pipeline {
                 sh '''
                 kubectl apply -f k8s/ -n prod
                 kubectl set image deployment/my-content my-content=$IMAGE_REPO:latest -n prod
-                kubectl rollout status deployment/my-content -n prod --timeout=180s
+                kubectl rollout status deployment/my-content -n prod --timeout=300s
+                kubectl wait --for=condition=available deployment/my-content -n prod --timeout=300s
                 kubectl get pods -n prod -l app=my-content
                 '''
             }

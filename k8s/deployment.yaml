@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: my-content
-          image: oheneali22/my-content:${TAG}
+          image: oheneali22/my-content:latest
           imagePullPolicy: Always
           env:
             - name: NODE_ENV
@@ -33,7 +33,7 @@ spec:
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
-                  name: my-content-confignodes
+                  name: my-content-config
                   key: DB_HOST
             - name: DB_PORT
               valueFrom:
