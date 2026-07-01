@@ -34,7 +34,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -f Dockerfile -t $IMAGE_REPO:$TAG .'
+                sh 'docker build -f Dockerfile -t $IMAGE_REPO:$TAG -t $IMAGE_REPO:latest .'
                 sh 'docker images | grep my-content'
             }
         }
@@ -61,8 +61,20 @@ pipeline {
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker push $IMAGE_REPO:$TAG
+                    docker push $IMAGE_REPO:latest
                     '''
                 }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f k8s/ -n prod
+                kubectl set image deployment/my-content my-content=$IMAGE_REPO:latest -n prod
+                kubectl rollout status deployment/my-content -n prod --timeout=180s
+                kubectl get pods -n prod -l app=my-content
+                '''
             }
         }
     }
